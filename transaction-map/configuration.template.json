@@ -1,0 +1,12 @@
+{
+    "name": "ConfigMapTemplate",
+    "components": {
+        "submitButton": {
+            "type": "Button",
+            "props": {
+                "submit": true,
+                "title": "Install"
+            }
+        }
+    }
+}

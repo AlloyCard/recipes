@@ -1,0 +1,43 @@
+{
+    "name": "My First Template",
+    "components": {
+        "tipAmount": {
+            "type": "TextInput",
+            "props": {
+                "placeholder": "How much do you tip?",
+                "value": "$$tipAmount",
+                "validations": [
+                    {
+                        "type": "regex",
+                        "config": "[0-9.]",
+                        "errorMessage": "Invalid Input"
+                    }
+                ]
+            }
+        },
+        "tipMax": {
+            "type": "TextInput",
+            "props": {
+                "placeholder": "Maximum tip Percentage?",
+                "validations": [
+                    {
+                        "type": "regex",
+                        "config": "[0-9.]",
+                        "errorMessage": "Invalid Input"
+                    }
+                ]
+            }
+        },
+        "send": {
+            "type": "Button",
+            "props": {
+                "title": "Save",
+                "submit": true,
+                "style": {
+                    "marginTop": 30,
+                    "alignSelf": "flex-end"
+                }
+            }
+        }
+    }
+}

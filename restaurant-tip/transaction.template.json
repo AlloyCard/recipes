@@ -1,0 +1,100 @@
+{
+    "name": "Restaurant Tip Template",
+    "components": {
+        "mainView": {
+            "type": "View",
+            "props": {
+                "style": {
+                    "flexDirection": "row",
+                    "justifyContent": "space-between"
+                }
+            },
+            "children": {
+                "totalPanel": {
+                    "type": "View",
+                    "props": {
+                        "style": {
+                            "alignItems": "center"
+                        }
+                    },
+                    "children": {
+                        "totalLabel": {
+                            "type": "Text",
+                            "props": {
+                                "style": {
+                                    "fontSize": 20
+                                },
+                                "label": "Total"
+                            }
+                        },
+                        "totalAmount": {
+                            "type": "Text",
+                            "props": {
+                                "style": {
+                                    "fontSize": 20
+                                },
+                                "label": "$$total"
+                            }
+                        }
+                    }
+                },
+                "tipPanel": {
+                    "type": "View",
+                    "props": {
+                        "style": {
+                            "alignItems": "center"
+                        }
+                    },
+                    "children": {
+                        "tipLabel": {
+                            "type": "Text",
+                            "props": {
+                                "style": {
+                                    "fontSize": 20
+                                },
+                                "label": "Tip"
+                            }
+                        },
+                        "tipAmount": {
+                            "type": "Text",
+                            "props": {
+                                "style": {
+                                    "fontSize": 20
+                                },
+                                "label": "$$tip"
+                            }
+                        }
+                    }
+                },
+                "alertPanel": {
+                    "type": "View",
+                    "props": {
+                        "style": {
+                            "alignItems": "center"
+                        }
+                    },
+                    "children": {
+                        "alertLabel": {
+                            "type": "Text",
+                            "props": {
+                                "style": {
+                                    "fontSize": 20
+                                },
+                                "label": "Alert Thr"
+                            }
+                        },
+                        "alertAmount": {
+                            "type": "Text",
+                            "props": {
+                                "style": {
+                                    "fontSize": 20
+                                },
+                                "label": "$$alert"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

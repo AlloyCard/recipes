@@ -1,0 +1,29 @@
+{
+    "name": "CategorizeTransactionTemplate",
+    "components": {
+        "category": {
+            "type": "DropDown",
+            "props": {
+                "label": "Transaction Category",
+                "value": "$$category",
+                "submitOnChange": true
+            },
+            "children": {
+                "restaurants": {
+                    "type": "DropDownItem",
+                    "props": {
+                        "label": "Restaurants",
+                        "value": "restaurants"
+                    }
+                },
+                "groceries": {
+                    "type": "DropDownItem",
+                    "props": {
+                        "label": "Groceries",
+                        "value": "groceries"
+                    }
+                }
+            }
+        }
+    }
+}
