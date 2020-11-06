@@ -1,5 +1,5 @@
 {
-    "name": "ConfigMapTemplate",
+    "name": "configuration",
     "components": {
         "submitButton": {
             "type": "Button",
