@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  google-exporter
+
+  Sample SAM Template for google-exporter
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Parameters:
+  GoogleOAuthClientId:
+      Type: String
+      Description: "Google OAuth ClientId"
+      NoEcho: true        
+
+Resources:
+  GoogleOAuthSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties: 
+      Description: Secrets for connecting to  Google OAuth Service
+      Name: /google/oauth
+      SecretString: !Sub '{"client_id": "${GoogleOAuthClientId}"}' 
+  GoogleExporterAPI:
+    Type: AWS::Serverless::HttpApi    
+  RequestAuthenticationFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: src/
+      Handler: app.requestAuth
+      Runtime: nodejs12.x
+      Environment: 
+        RedirectUri: !Sub "https://${GoogleExporterAPI}.execute-api.${AWS::Region}.amazonaws.com/request-authentication"
+      Policies:
+        AWSSecretsManagerGetSecretValuePolicy:
+          SecretArn: !Ref GoogleOAuthSecret
+      Events:
+        RequestAuthentication:
+          Type: HttpApi 
+          Properties:
+            ApiId: !Ref GoogleExporterAPI
+            Path: /request-authentication
+            Method: get
+  RedirectToAppFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.redirectToApp
+      Runtime: nodejs12.x
+      Events:
+          RedirectToApp:
+            Type: HttpApi
+            ApiId: !Ref GoogleExporterAPI
+            Path: /redirect-to-app
+            Method: get
+  AccessTokenTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: OAuthTable      
+
+Outputs:
+  RequestAuthenticationFunctionApi:
+    Description: "API Gateway endpoint URL for Prod stage for GoogleExporter function"
+    Value: !Sub "https://${GoogleExporterAPI}.execute-api.${AWS::Region}.amazonaws.com/request-authentication"
+  RequestAuthenticationFunction:
+    Description: "GoogleExporter Lambda Function ARN"
+    Value: !GetAtt RequestAuthenticationFunction.Arn
+  RequestAuthenticationFunctionIamRole:
+    Description: "Implicit IAM Role created for GoogleExporter function"
+    Value: !GetAtt RequestAuthenticationFunctionRole.Arn

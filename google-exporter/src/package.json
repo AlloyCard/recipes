@@ -1,0 +1,19 @@
+{
+  "name": "google_exporter",
+  "version": "1.0.0",
+  "description": "Google Exporter",
+  "main": "app.js",
+  "author": "Renato Steinberg",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.794.0",
+    "axios": "^0.21.0"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4"
+  }
+}
