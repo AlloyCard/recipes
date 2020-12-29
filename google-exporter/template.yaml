@@ -52,6 +52,18 @@ Resources:
             ApiId: !Ref GoogleExporterAPI
             Path: /redirect-to-app
             Method: get
+  AlloyCardWebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: app.alloyWebhook
+      Runtime: nodejs12.x
+      Events:
+        AlloyWebhook:
+          Type: HttpApi
+          ApiId: !Ref GoogleExporterAPI
+          Path: /alloy-webhook
+          Method: post
   AccessTokenTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
