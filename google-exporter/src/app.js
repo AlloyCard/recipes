@@ -2,9 +2,11 @@
 
 var AWS = require('aws-sdk'),
     region = "us-east-1",
-    secretName = "/google/oauth",
+
     secret,
     decodedBinarySecret;
+
+var axios = require("axios")
     
    
 
@@ -16,8 +18,9 @@ var dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 
 
-const redirectUri = process.env.RedirectUri
-const oAuthTableName = process.env.oAuthTableName
+const oAuthTableName = "GoogleExporterOAuthTable"
+
+
 
 exports.requestAuth = async (event, context) => {
     try {
@@ -28,7 +31,7 @@ exports.requestAuth = async (event, context) => {
         return {
             'statusCode': 301,
             headers: {
-                Location: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/spreadsheets&access_type=offline&state=${userId}`,
+                Location: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=https://${event.headers.host}/redirect-to-app&response_type=code&scope=https://www.googleapis.com/auth/spreadsheets&access_type=offline&state=${userId}`,
               }
         }
         
@@ -45,12 +48,23 @@ exports.redirectToApp = async (event, context)  => {
     const secret = JSON.parse(await getSecret("/google/oauth"))
     const client_id = secret.client_id
     const client_secret = secret.client_secret
+
+    const redirect_uri = `https://${event.headers.host}/redirect-to-app`
     
 
+    const params = new URLSearchParams()
+    params.append('client_id',client_id)
+    params.append('client_secret',client_secret)
+    params.append('code',code)
+    params.append('grant_type',"authorization_code")
+    params.append('redirect_uri', redirect_uri)
 
-    const resp = await axios.get(`https://oauth2.googleapis.com/token?client_id=${client_id}&client_secret=${client_secret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirect_uri}`)
-    
-    await insert({id: userId, ...resp})
+    const resp = await axios.post('https://oauth2.googleapis.com/token', params, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    });        
+    await insert({id: userId, ...resp.data})
     
 
     return {

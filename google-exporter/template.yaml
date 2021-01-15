@@ -11,15 +11,17 @@ Parameters:
   GoogleOAuthClientId:
       Type: String
       Description: "Google OAuth ClientId"
-      NoEcho: true        
-
+  GoogleOauthSecret:      
+      Type: String
+      Description: "Google OAuth Secret"
+     # NoEcho: true      
 Resources:
   GoogleOAuthSecret:
     Type: AWS::SecretsManager::Secret
     Properties: 
       Description: Secrets for connecting to  Google OAuth Service
       Name: /google/oauth
-      SecretString: !Sub '{"client_id": "${GoogleOAuthClientId}"}' 
+      SecretString: !Sub '{"client_id": "${GoogleOAuthClientId}", "client_secret": "${GoogleOauthSecret}"}' 
   GoogleExporterAPI:
     Type: AWS::Serverless::HttpApi    
   RequestAuthenticationFunction:
@@ -27,9 +29,7 @@ Resources:
     Properties:
       CodeUri: src/
       Handler: app.requestAuth
-      Runtime: nodejs12.x
-      Environment: 
-        RedirectUri: !Sub "https://${GoogleExporterAPI}.execute-api.${AWS::Region}.amazonaws.com/request-authentication"
+      Runtime: nodejs12.x              
       Policies:
         AWSSecretsManagerGetSecretValuePolicy:
           SecretArn: !Ref GoogleOAuthSecret
@@ -39,19 +39,25 @@ Resources:
           Properties:
             ApiId: !Ref GoogleExporterAPI
             Path: /request-authentication
-            Method: get
+            Method: GET
   RedirectToAppFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
       Handler: app.redirectToApp
       Runtime: nodejs12.x
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref GoogleOAuthSecret
+        - DynamoDBWritePolicy:
+            TableName: GoogleExporterOAuthTable
       Events:
           RedirectToApp:
             Type: HttpApi
-            ApiId: !Ref GoogleExporterAPI
-            Path: /redirect-to-app
-            Method: get
+            Properties:
+              ApiId: !Ref GoogleExporterAPI
+              Path: /redirect-to-app
+              Method: GET
   AlloyCardWebhookFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -61,13 +67,14 @@ Resources:
       Events:
         AlloyWebhook:
           Type: HttpApi
-          ApiId: !Ref GoogleExporterAPI
-          Path: /alloy-webhook
-          Method: post
+          Properties:
+            ApiId: !Ref GoogleExporterAPI
+            Path: /alloy-webhook
+            Method: POST
   AccessTokenTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
-      TableName: OAuthTable      
+      TableName: GoogleExporterOAuthTable
 
 Outputs:
   RequestAuthenticationFunctionApi:

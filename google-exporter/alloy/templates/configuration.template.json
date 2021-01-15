@@ -1,0 +1,12 @@
+{
+    "name": "configuration",
+    "components": {
+        "submitButton": {
+            "type": "Button",
+            "props": {
+                "url": "https://t7l4tx8aol.execute-api.us-east-1.amazonaws.com/request-authentication?userId={{recipeInstallId}}",
+                "title": "Install"
+            }
+        }
+    }
+}
