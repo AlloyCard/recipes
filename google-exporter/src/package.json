@@ -6,6 +6,7 @@
   "author": "Renato Steinberg",
   "license": "MIT",
   "dependencies": {
+    "@alloycard/alloy-js": "^1.0.5",
     "aws-sdk": "^2.794.0",
     "axios": "^0.21.0"
   },

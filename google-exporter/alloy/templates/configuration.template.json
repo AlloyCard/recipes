@@ -4,7 +4,7 @@
         "submitButton": {
             "type": "Button",
             "props": {
-                "url": "https://t7l4tx8aol.execute-api.us-east-1.amazonaws.com/request-authentication?userId={{recipeInstallId}}",
+                "url": "https://t7l4tx8aol.execute-api.us-east-1.amazonaws.com/request-authentication?recipeInstallId={{recipeInstallId}}",
                 "title": "Install"
             }
         }

@@ -26,12 +26,12 @@ exports.requestAuth = async (event, context) => {
     try {
 
         const client_id = JSON.parse(await getSecret("/google/oauth")).client_id
-        const userId= event.queryStringParameters["userId"]
+        const recipeInstallId= event.queryStringParameters["recipeInstallId"]
 
         return {
             'statusCode': 301,
             headers: {
-                Location: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=https://${event.headers.host}/redirect-to-app&response_type=code&scope=https://www.googleapis.com/auth/spreadsheets&access_type=offline&state=${userId}`,
+                Location: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=https://${event.headers.host}/redirect-to-app&response_type=code&scope=https://www.googleapis.com/auth/spreadsheets&access_type=offline&state=${recipeInstallId}`,
               }
         }
         
@@ -44,7 +44,7 @@ exports.requestAuth = async (event, context) => {
 
 exports.redirectToApp = async (event, context)  => {
     const code = event.queryStringParameters["code"]
-    const userId= event.queryStringParameters["state"]
+    const recipeInstallId= event.queryStringParameters["state"]
     const secret = JSON.parse(await getSecret("/google/oauth"))
     const client_id = secret.client_id
     const client_secret = secret.client_secret
@@ -64,15 +64,19 @@ exports.redirectToApp = async (event, context)  => {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     });        
-    await insert({id: userId, ...resp.data})
+    await insert({id: recipeInstallId, ...resp.data})
     
 
     return {
         'statusCode': 301,
         headers: {
-            Location: `exp://192.168.137.1:19000/--/RecipeConfiguration?recipeId=MYRECIPEID`    
+            Location: `exp://192.168.137.1:19000/--/RecipeConfiguration?recipeInstallId=${recipeInstallId}`
         }
     }
+}
+
+exports.alloyWebhook = async (event, context) => {
+
 }
 
 
