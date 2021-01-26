@@ -1,11 +1,25 @@
 {
     "name": "configuration",
     "components": {
+        "authorizeText": {
+            "type": "Text",
+            "props": {
+                "label": "Please click the button below to authorize the Recipe to access your Google Sheets Account"
+            }
+
+        },
+        "sheetName": {
+            "type": "TextInput",
+            "props": {
+                "placeholder": "Sheet Name"
+            }
+        },
         "submitButton": {
             "type": "Button",
             "props": {
-                "url": "https://t7l4tx8aol.execute-api.us-east-1.amazonaws.com/request-authentication?recipeInstallId={{recipeInstallId}}",
-                "title": "Install"
+                "url": "https://dz1llnqyie.execute-api.us-east-1.amazonaws.com/request-authentication?recipeInstallId={{recipeInstallId}}",
+                "title": "Authorize",
+                "marginTop": 10
             }
         }
     }

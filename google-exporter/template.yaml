@@ -28,7 +28,7 @@ Resources:
   RequestAuthenticationFunction:
     Type: AWS::Serverless::Function 
     Properties:
-      CodeUri: src/
+      CodeUri: dist/
       Handler: app.requestAuth
       Runtime: nodejs12.x              
       Policies:
@@ -44,9 +44,12 @@ Resources:
   RedirectToAppFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: dist/
       Handler: app.redirectToApp
       Runtime: nodejs12.x
+      Environment: 
+        Variables:
+          alloyKey: !Ref GoogleExporterAlloyKey
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref GoogleOAuthSecret
@@ -62,7 +65,7 @@ Resources:
   AlloyCardWebhookFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/
+      CodeUri: dist/
       Handler: app.alloyWebhook
       Runtime: nodejs12.x
       Events:
@@ -72,6 +75,26 @@ Resources:
             ApiId: !Ref GoogleExporterAPI
             Path: /alloy-webhook
             Method: POST
+
+  GoogleExporterAlloyKey: 
+    Type: AWS::KMS::Key
+    Properties: 
+      Description: Key to Access AlloyCard resources
+      Enabled: true
+      EnableKeyRotation: false
+      KeyPolicy:
+        Version: '2012-10-17'
+        Id: key-allow-root
+        Statement:
+        - Sid: Enable IAM User Permissions
+          Effect: Allow
+          Principal: 
+            AWS:  !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+          Action: kms:*
+          Resource: '*'
+      KeySpec: RSA_2048
+      KeyUsage: SIGN_VERIFY
+      PendingWindowInDays: 7
   AccessTokenTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
@@ -87,3 +110,6 @@ Outputs:
   RequestAuthenticationFunctionIamRole:
     Description: "Implicit IAM Role created for GoogleExporter function"
     Value: !GetAtt RequestAuthenticationFunctionRole.Arn
+  AlloyKey:
+    Description: "Alloy Public Recipe Key"
+    Value: !Ref GoogleExporterAlloyKey
