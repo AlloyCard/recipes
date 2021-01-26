@@ -1,0 +1,11 @@
+{
+  "name": "subscription-manager",
+  "version": "1.0.0",
+  "description": "recipie to manager subscription services",
+  "main": "app.js",
+  "author": "Alloy Card",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

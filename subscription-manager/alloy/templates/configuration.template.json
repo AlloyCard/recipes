@@ -1,0 +1,12 @@
+{
+    "name": "configuration",
+    "components": {
+        "submitButton": {
+            "type": "Button",
+            "props": {
+                "submit": true,
+                "title": "Install"
+            }
+        }
+    }
+}
