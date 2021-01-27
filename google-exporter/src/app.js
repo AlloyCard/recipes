@@ -127,7 +127,7 @@ exports.redirectToApp = async (event, context)  => {
     });        
     await insert({id: recipeInstallId, ...resp.data})
     
-    await setAlloyConfig;
+    await setAlloyConfig(alloyKey, recipeInstallId);
 
     return {
         'statusCode': 301,
