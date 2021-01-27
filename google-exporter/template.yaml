@@ -55,6 +55,12 @@ Resources:
             SecretArn: !Ref GoogleOAuthSecret
         - DynamoDBWritePolicy:
             TableName: GoogleExporterOAuthTable
+        - Statement:
+            - Sid: EnableLambdaSignKMS
+              Effect: Allow
+              Action: kms:Sign
+              Resource: !Sub 'arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/${GoogleExporterAlloyKey}'
+              
       Events:
           RedirectToApp:
             Type: HttpApi

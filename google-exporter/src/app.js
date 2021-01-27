@@ -26,7 +26,7 @@ const oAuthTableName = "GoogleExporterOAuthTable"
 const AlloyJS = require("@alloycard/alloy-js") 
 
 AlloyJS.configure({
-    serverUrl: "http://127.0.0.1:8080/graphql",
+    serverUrl: "http://ec2-3-236-122-115.compute-1.amazonaws.com:8080/graphql",
     fetch: fetch
 })
 
