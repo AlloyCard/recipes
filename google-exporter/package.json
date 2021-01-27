@@ -1,0 +1,26 @@
+{
+  "name": "google_exporter",
+  "version": "1.0.0",
+  "description": "Google Exporter",
+  "main": "src/app.js",
+  "author": "Renato Steinberg",
+  "license": "MIT",
+  "dependencies": {
+    "@alloycard/alloy-js": "^1.0.5",
+    "aws-sdk": "^2.794.0",
+    "axios": "^0.21.0",
+    "base64url": "^3.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.1"
+  },
+  "scripts": {
+    "test": "mocha src/test/unit/ --timeout 10000"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "file-loader": "^6.2.0",
+    "mocha": "^6.1.4",
+    "webpack": "^5.18.0",
+    "webpack-cli": "^4.4.0"
+  }
+}
