@@ -13,3 +13,6 @@ debug:
 
 print:
 	@echo ${APP_NAME}
+
+ip:
+	@docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${APP_NAME}

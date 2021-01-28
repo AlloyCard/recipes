@@ -9,15 +9,19 @@ Helps the user to follow your charges from subscription services and manage them
 | POST   | `/users`                    | insert new user          |
 | POST   | `/users/{code}/transactions` | insert transaction      |
 
-## Database
+## Migration
 
 ```sql
 CREATE SCHEMA `recipe_subscription_manager`;
 
 USE `recipe_subscription_manager`;
 
-CREATE TABLE `user` (
-  `id` INT NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `transaction` (
+  `id` VARCHAR(45) NOT NULL,
+  `createdAt` DATETIME NOT NULL,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 );
+
+CREATE USER 'alloy_dba'@'localhost' IDENTIFIED BY 'aGVmjaSByA';
+GRANT SELECT, INSERT ON `transaction` TO 'alloy_dba'@'localhost';
 ```
