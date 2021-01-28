@@ -1,106 +1,21 @@
 "use strict"
 
-var AWS = require('aws-sdk'),
-    region = "us-east-1",
-
-    secret,
-    decodedBinarySecret;
-
 var axios = require("axios")
-
-
-var KMS = new AWS.KMS({region: region})
-const base64url = require("base64url");
-const fetch = require('node-fetch');
-
-
-var secretManager = new AWS.SecretsManager({
-    region: region
-});
-var dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-var jwt = require('jsonwebtoken');
 
 const oAuthTableName = "GoogleExporterOAuthTable"
 
-const AlloyJS = require("@alloycard/alloy-js")
+const sheetName = "Alloy Transactions"
 
-AlloyJS.configure({
-    serverUrl: "http://ec2-3-236-122-115.compute-1.amazonaws.com:8080/graphql",
-    fetch: fetch
-})
+const getSecret = require("./secret")
 
+const alloy  = require('./alloy')
 
-exports.requestAuth = async (event, context) => {
-    try {
-
-        const client_id = JSON.parse(await getSecret("/google/oauth")).client_id
-        const recipeInstallId= event.queryStringParameters["recipeInstallId"]
-
-        return {
-            'statusCode': 301,
-            headers: {
-                Location: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=https://${event.headers.host}/redirect-to-app&response_type=code&scope=https://www.googleapis.com/auth/spreadsheets&access_type=offline&state=${recipeInstallId}`,
-              }
-        }
-
-    } catch (err) {
-        console.log(err);
-        return err;
-    }
-
-};
-
-
-async function buildAlloyJWT(recipeId, keyId) {
-    const header = {
-        "alg": "RS256",
-        "typ": "JWT",
-        "kid": `AlloyPrincipal-${recipeId}`
-      }
-
-    const payload = {
-        exp:  Math.floor(Date.now() / 1000) + 60,
-        iat: Math.floor(Date.now() / 1000),
-        iss: "AlloyCard",
-        "custom:principalId": recipeId,
-        "custom:principalType": "com.alloycard.core.entities.recipe.Recipe"
-    }
-
-    let token_components = {
-        header: base64url(JSON.stringify(header)),
-        payload: base64url(JSON.stringify(payload)),
-    };
-
-    let message = Buffer.from(token_components.header + "." + token_components.payload)
-
-
-    let res = await KMS.sign({
-        Message: message,
-        KeyId: keyId,
-        SigningAlgorithm: 'RSASSA_PKCS1_V1_5_SHA_256',
-        MessageType: 'RAW'
-    }).promise()
-
-    token_components.signature = res.Signature.toString("base64").replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    return token_components.header + "." + token_components.payload + "." + token_components.signature;
-}
-
-
-async function setAlloyConfig(alloyKey, recipeInstallId) {
-    const recipeKey = await buildAlloyJWT(recipeInstallId, alloyKey)
-    AlloyJS.AuthService.setAuthToken(recipeKey)
-    const recipeInstallJWT = await AlloyJS.RecipesService.getRecipeInstallToken(recipeInstallId)
-    AlloyJS.AuthService.setAuthToken(recipeInstallJWT)
-    const changeData = await AlloyJS.RecipesService.changeRecipeInstallConfig(recipeInstallId, {oauthCompleted: true})
-    return changeData
-}
-
-exports.setAlloyConfig = setAlloyConfig
+const sheets = require("./sheets")
 
 exports.redirectToApp = async (event, context)  => {
 
     const alloyKey = process.env.alloyKey
+    const recipeId = process.env.recipeId
 
     const code = event.queryStringParameters["code"]
     const recipeInstallId= event.queryStringParameters["state"]
@@ -125,9 +40,13 @@ exports.redirectToApp = async (event, context)  => {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     });
-    await insert({id: recipeInstallId, ...resp.data})
 
-    await setAlloyConfig(alloyKey, recipeInstallId);
+    const sheet = await sheets.createSheet(resp.data, sheetName)
+    await dynamo.insert(oAuthTableName, {id: recipeInstallId, sheetId: sheet.spreadSheetId,  ...resp.data})
+
+    await alloy.setRecipeInstallConfig(alloyKey, recipeId, recipeInstallId, {oauthCompleted: true, sheetName: sheetName});
+
+
 
     return {
         'statusCode': 301,
@@ -137,40 +56,8 @@ exports.redirectToApp = async (event, context)  => {
     }
 }
 
-exports.alloyWebhook = async (event, context) => {
-
-}
 
 
-async function insert(item) {
-    var params = {
-        TableName:oAuthTableName,
-        Item: item
-    }
 
-    return new Promise((res, rej) => {
-        dynamoDb.put(params, function(err, data) {
-            if (err) {
-                rej(err)
-            } else {
-                res(data)
-            }
-        })
-    })
-}
-
-
-async function getSecret(secretName) {
-    return new Promise((res, rej) => {
-        secretManager.getSecretValue({SecretId: secretName}, function(err, data) {
-            if (err) {
-                rej(err)
-            }
-            else {
-                res(data.SecretString)
-            }
-        });
-    })
-}
 
 

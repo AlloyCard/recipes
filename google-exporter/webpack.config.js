@@ -13,7 +13,7 @@ const config = {
     // aws-sdk is already available in the Node.js Lambda environment
     //  so it can be excluded from function bundles
     externals: [
-        'aws-sdk'       
+        'aws-sdk',
     ],    
     output: {
         path: OUT_DIR,
@@ -22,7 +22,7 @@ const config = {
         libraryTarget: 'umd'
     },
     target: 'node',
-    mode: 'production',    
+    mode: 'development',    
     module: {
         rules: [
           {

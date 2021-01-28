@@ -1,3 +1,43 @@
+{{#if oauthCompleted}}
+{
+    "name": "configuration",
+    "components": {
+        "congratsLabel": {
+            "type": "Text",
+            "props": {
+                "size": 30,              
+                "label": "Google Exporter is Connected"                 
+            }
+        },        
+        "authorizeText": {
+            "type": "Text",
+            "props": {
+                "label": "Google Sheet Export is exporting transactions to sheet: {{sheetName}}"   
+            }              
+        },
+        "sheetNameLabel": {
+            "type": "Text",
+            "props": {                
+                "label": "To change the sheet name, please type the new name below"                 
+            }
+        },
+        "sheetName": {
+            "type": "TextInput",
+            "props": {
+                "placeholder": "Sheet Name"
+            }
+        },
+        "submitButton": {
+            "type": "Button",
+            "props": {
+                "submit": true,
+                "title": "Save",
+                "marginTop": 10
+            }
+        }        
+    }
+}
+{{else}}
 {
     "name": "configuration",
     "components": {
@@ -24,3 +64,4 @@
         }
     }
 }
+{{/if}}

@@ -15,6 +15,9 @@ Parameters:
       Type: String
       Description: "Google OAuth Secret"
      # NoEcho: true      
+  RecipeId:
+      Type: String
+      Description: "Alloy Recipe Id:"
   
 Resources:
   GoogleOAuthSecret:
@@ -50,6 +53,7 @@ Resources:
       Environment: 
         Variables:
           alloyKey: !Ref GoogleExporterAlloyKey
+          recipeId: !Ref RecipeId
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Ref GoogleOAuthSecret
