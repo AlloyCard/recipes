@@ -17,18 +17,19 @@ func (app *App) webhookHandler(rw http.ResponseWriter, req *http.Request) {
 
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		logrus.WithError(err).Error("read body fail")
+		logrus.WithError(err).Error("fail in read body")
 		return
 	}
 
 	err = json.Unmarshal(body, &payload)
 	if err != nil {
-		logrus.WithError(err).Error("decode body fail")
+		logrus.WithError(err).Error("fail in decode body")
 		return
 	}
 
 	switch payload.Type {
 	case "com.alloycard.core.entities.user.TransactionEvent":
+		// TODO check if is it the event type correct
 		app.postTransaction(body)
 	}
 }

@@ -24,9 +24,11 @@ func (app *App) postTransaction(body []byte) {
 		return
 	}
 
-	// handler payload.Transaction.Type
-	// fetch data on graphql api
-	// parse createAt to datetime
+	// TODO
+	// - JWT auth
+	// - handler payload.Transaction.Type
+	// - fetch data on graphql api
+	// - check if it is an subscription charge
 
 	app.Database.InsertTransaction(
 		payload.Transaction.ID, payload.CreatedAt,

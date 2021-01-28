@@ -11,8 +11,5 @@ debug:
 		--env-file .env -p ${PORT}:8092 --name ${APP_NAME}-debug \
 		${DOCKER_BASE_IMAGE} bash
 
-print:
-	@echo ${APP_NAME}
-
 ip:
 	@docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${APP_NAME}
