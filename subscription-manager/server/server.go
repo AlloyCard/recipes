@@ -17,12 +17,11 @@ type App struct {
 }
 
 // Run start app App
-func Run(port string) {
+func Run(port int) {
 	db, err := database.New()
 	defer db.Connection.Close()
 	if err != nil {
-		logrus.WithError(err).Error("connectio with database fail")
-		return
+		logrus.WithError(err).Fatal("connection with database fail")
 	}
 
 	app := App{Database: db}
@@ -31,7 +30,7 @@ func Run(port string) {
 	r.HandleFunc("/webhook", app.webhookHandler).Methods(http.MethodPost)
 
 	app.Server = http.Server{
-		Addr:    fmt.Sprintf(":%s", port),
+		Addr:    fmt.Sprintf(":%d", port),
 		Handler: r,
 	}
 

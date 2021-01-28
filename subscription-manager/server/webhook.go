@@ -27,7 +27,8 @@ func (app *App) webhookHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if payload.Type == "com.alloycard.core.entities.user.TransactionEvent" {
+	switch payload.Type {
+	case "com.alloycard.core.entities.user.TransactionEvent":
 		app.postTransaction(body)
 	}
 }
