@@ -2,7 +2,10 @@ package server
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 type event struct {
@@ -11,17 +14,20 @@ type event struct {
 
 func (app *App) webhookHandler(rw http.ResponseWriter, req *http.Request) {
 	payload := event{}
-	type response struct {
-		Message string `json:"message"`
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		logrus.WithError(err).Error("read body fail")
+		return
 	}
 
-	err := json.NewDecoder(req.Body).Decode(&payload)
+	err = json.Unmarshal(body, &payload)
 	if err != nil {
-		// TODO log
+		logrus.WithError(err).Error("decode body fail")
 		return
 	}
 
 	if payload.Type == "com.alloycard.core.entities.user.TransactionEvent" {
-		app.postTransaction(rw, req)
+		app.postTransaction(body)
 	}
 }

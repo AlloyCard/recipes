@@ -2,10 +2,12 @@ package server
 
 import (
 	"encoding/json"
-	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 type transactionEvent struct {
+	Type        string `json:"_alloyCardType"`
 	CreatedAt   int    `json:"createdAt"`
 	EventID     string `json:"eventId"`
 	Transaction struct {
@@ -14,13 +16,11 @@ type transactionEvent struct {
 	} `json:"transaction"`
 }
 
-func (app *App) postTransaction(rw http.ResponseWriter, req *http.Request) {
+func (app *App) postTransaction(body []byte) {
 	payload := transactionEvent{}
-
-	rw.Header().Set("Content-Type", "application/json")
-	err := json.NewDecoder(req.Body).Decode(&payload)
+	err := json.Unmarshal(body, &payload)
 	if err != nil {
-		// TODO log
+		logrus.WithError(err).Error("decode body fail")
 		return
 	}
 

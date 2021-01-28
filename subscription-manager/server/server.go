@@ -7,6 +7,7 @@ import (
 	"subscription-manager/database"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
 
 // App is the web aplication struct with http server and database connection
@@ -20,7 +21,8 @@ func Run(port string) {
 	db, err := database.New()
 	defer db.Connection.Close()
 	if err != nil {
-		// LOG
+		logrus.WithError(err).Error("connectio with database fail")
+		return
 	}
 
 	app := App{Database: db}
