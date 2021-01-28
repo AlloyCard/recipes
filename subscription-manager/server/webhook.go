@@ -27,6 +27,9 @@ func (app *App) webhookHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// TODO
+	// - JWT auth
+
 	switch payload.Type {
 	case "com.alloycard.core.entities.user.TransactionEvent":
 		// TODO check if is it the event type correct
