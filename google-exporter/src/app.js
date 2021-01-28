@@ -11,7 +11,6 @@ var axios = require("axios")
   
 var KMS = new AWS.KMS({region: region})
 const base64url = require("base64url");
-const fetch = require('node-fetch');
 
 
 var secretManager = new AWS.SecretsManager({
@@ -25,9 +24,11 @@ const oAuthTableName = "GoogleExporterOAuthTable"
 
 const AlloyJS = require("@alloycard/alloy-js") 
 
+
+const sheetName = "Alloy Transactions"
+
 AlloyJS.configure({
-    serverUrl: "http://ec2-3-236-122-115.compute-1.amazonaws.com:8080/graphql",
-    fetch: fetch
+    serverUrl: "http://ec2-3-236-122-115.compute-1.amazonaws.com:8080/graphql"
 })
 
 
@@ -87,20 +88,23 @@ async function buildAlloyJWT(recipeId, keyId) {
 }
 
 
-async function setAlloyConfig(alloyKey, recipeInstallId) {
-    const recipeKey = await buildAlloyJWT(recipeInstallId, alloyKey)
-    AlloyJS.AuthService.setAuthToken(recipeKey)
+async function setAlloyConfig(alloyKey, recipeId, recipeInstallId) {
+    const recipeKey = await buildAlloyJWT(recipeId, alloyKey)
+    AlloyJS.AuthService.setAuthToken(recipeKey)    
     const recipeInstallJWT = await AlloyJS.RecipesService.getRecipeInstallToken(recipeInstallId)
-    AlloyJS.AuthService.setAuthToken(recipeInstallJWT)
-    const changeData = await AlloyJS.RecipesService.changeRecipeInstallConfig(recipeInstallId, {oauthCompleted: true})
+    AlloyJS.AuthService.setAuthToken(recipeInstallJWT)    
+    const changeData = await AlloyJS.RecipesService.changeRecipeInstallConfig(recipeInstallId, {oauthCompleted: true, sheetName: sheetName})
     return changeData
 }
+
+
 
 exports.setAlloyConfig = setAlloyConfig
 
 exports.redirectToApp = async (event, context)  => {
     
     const alloyKey = process.env.alloyKey
+    const recipeId = process.env.recipeId
 
     const code = event.queryStringParameters["code"]
     const recipeInstallId= event.queryStringParameters["state"]
@@ -127,7 +131,9 @@ exports.redirectToApp = async (event, context)  => {
     });        
     await insert({id: recipeInstallId, ...resp.data})
     
-    await setAlloyConfig(alloyKey, recipeInstallId);
+    await setAlloyConfig(alloyKey, recipeId, recipeInstallId);
+
+
 
     return {
         'statusCode': 301,
