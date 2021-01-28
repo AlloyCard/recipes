@@ -12,7 +12,6 @@ var axios = require("axios")
 var KMS = new AWS.KMS({region: region})
 const base64url = require("base64url");
 const fetch = require('node-fetch');
-// Acho que o node fetch pode substitui o axios
 
 
 var secretManager = new AWS.SecretsManager({
