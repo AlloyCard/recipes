@@ -8,10 +8,11 @@ var AWS = require('aws-sdk'),
 
 var axios = require("axios")
 
-  
+
 var KMS = new AWS.KMS({region: region})
 const base64url = require("base64url");
 const fetch = require('node-fetch');
+// Acho que o node fetch pode substitui o axios
 
 
 var secretManager = new AWS.SecretsManager({
@@ -23,7 +24,7 @@ var jwt = require('jsonwebtoken');
 
 const oAuthTableName = "GoogleExporterOAuthTable"
 
-const AlloyJS = require("@alloycard/alloy-js") 
+const AlloyJS = require("@alloycard/alloy-js")
 
 AlloyJS.configure({
     serverUrl: "http://ec2-3-236-122-115.compute-1.amazonaws.com:8080/graphql",
@@ -43,7 +44,7 @@ exports.requestAuth = async (event, context) => {
                 Location: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=https://${event.headers.host}/redirect-to-app&response_type=code&scope=https://www.googleapis.com/auth/spreadsheets&access_type=offline&state=${recipeInstallId}`,
               }
         }
-        
+
     } catch (err) {
         console.log(err);
         return err;
@@ -56,7 +57,7 @@ async function buildAlloyJWT(recipeId, keyId) {
     const header = {
         "alg": "RS256",
         "typ": "JWT",
-        "kid": `AlloyPrincipal-${recipeId}` 
+        "kid": `AlloyPrincipal-${recipeId}`
       }
 
     const payload = {
@@ -74,7 +75,7 @@ async function buildAlloyJWT(recipeId, keyId) {
 
     let message = Buffer.from(token_components.header + "." + token_components.payload)
 
-    
+
     let res = await KMS.sign({
         Message: message,
         KeyId: keyId,
@@ -83,7 +84,7 @@ async function buildAlloyJWT(recipeId, keyId) {
     }).promise()
 
     token_components.signature = res.Signature.toString("base64").replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
-    return token_components.header + "." + token_components.payload + "." + token_components.signature;    
+    return token_components.header + "." + token_components.payload + "." + token_components.signature;
 }
 
 
@@ -99,7 +100,7 @@ async function setAlloyConfig(alloyKey, recipeInstallId) {
 exports.setAlloyConfig = setAlloyConfig
 
 exports.redirectToApp = async (event, context)  => {
-    
+
     const alloyKey = process.env.alloyKey
 
     const code = event.queryStringParameters["code"]
@@ -111,7 +112,7 @@ exports.redirectToApp = async (event, context)  => {
 
 
     const redirect_uri = `https://${event.headers.host}/redirect-to-app`
-    
+
 
     const params = new URLSearchParams()
     params.append('client_id',client_id)
@@ -124,9 +125,9 @@ exports.redirectToApp = async (event, context)  => {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
-    });        
+    });
     await insert({id: recipeInstallId, ...resp.data})
-    
+
     await setAlloyConfig(alloyKey, recipeInstallId);
 
     return {
@@ -146,7 +147,7 @@ async function insert(item) {
     var params = {
         TableName:oAuthTableName,
         Item: item
-    }    
+    }
 
     return new Promise((res, rej) => {
         dynamoDb.put(params, function(err, data) {
@@ -155,7 +156,7 @@ async function insert(item) {
             } else {
                 res(data)
             }
-        }) 
+        })
     })
 }
 
