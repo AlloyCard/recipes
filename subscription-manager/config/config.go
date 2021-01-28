@@ -10,8 +10,8 @@ import (
 // Config summarises all environment variables.
 type Config struct {
 	Database Database `mapstructure:",squash"`
-	Server   Server   `mapstructure:",squash"`
 	LogLevel string   `mapstructure:"log_level"`
+	Server   Server   `mapstructure:",squash"`
 }
 
 // Database summarises all Database variables.
@@ -41,12 +41,12 @@ func Load() (*Config, error) {
 	}
 	logrus.Info("Loading envs.")
 
-	viper.SetDefault("LOG_LEVEL", "WARN")
 	viper.SetDefault("DATABASE_DRIVER", "mysql")
 	viper.SetDefault("DATABASE_HOST", "172.17.0.2:3306")
 	viper.SetDefault("DATABASE_NAME", "recipe_subscription_manager")
 	viper.SetDefault("DATABASE_PASSWORD", "H7ef2ZZVcA")
 	viper.SetDefault("DATABASE_USER", "alloy_dba")
+	viper.SetDefault("LOG_LEVEL", "WARN")
 	viper.SetDefault("PORT", 8092)
 
 	viper.AutomaticEnv()
