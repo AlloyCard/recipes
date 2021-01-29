@@ -1,10 +1,10 @@
 
-const secret = require("./secret.js")
+const secret = require("./secret")
 
-exports.requestAuth = async (event, context) => {
+exports.handler = async (event, context) => {
     try {
 
-        const client_id = JSON.parse(await secret("/google/oauth")).client_id
+        const client_id = JSON.parse(await secret.getSecret("/google/oauth")).client_id
         const recipeInstallId= event.queryStringParameters["recipeInstallId"]
 
         return {

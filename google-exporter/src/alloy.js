@@ -1,7 +1,10 @@
+const AWS = require('aws-sdk')
 
 const base64url = require("base64url");
 
 const AlloyJS = require("@alloycard/alloy-js") 
+
+const KMS = new AWS.KMS({region: "us-east-1"})
 
 
 AlloyJS.configure({
@@ -43,7 +46,7 @@ async function buildAlloyJWT(recipeId, keyId) {
 }
 
 
-async function setRecipeInstallConfig(alloyKey, recipeId, recipeInstallId, configs) {
+exports.setRecipeInstallConfig = async (alloyKey, recipeId, recipeInstallId, configs)  => {
     const recipeKey = await buildAlloyJWT(recipeId, alloyKey)
     AlloyJS.AuthService.setAuthToken(recipeKey)    
     const recipeInstallJWT = await AlloyJS.RecipesService.getRecipeInstallToken(recipeInstallId)
@@ -52,4 +55,3 @@ async function setRecipeInstallConfig(alloyKey, recipeId, recipeInstallId, confi
     return changeData
 }
 
-exports.setRecipeInstallConfig = setRecipeInstallConfig
