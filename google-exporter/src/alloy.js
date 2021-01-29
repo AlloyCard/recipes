@@ -1,7 +1,10 @@
+const AWS = require('aws-sdk')
 
 const base64url = require("base64url");
 
 const AlloyJS = require("@alloycard/alloy-js") 
+
+const KMS = new AWS.KMS({region: "us-east-1"})
 
 
 AlloyJS.configure({
@@ -42,14 +45,28 @@ async function buildAlloyJWT(recipeId, keyId) {
     return token_components.header + "." + token_components.payload + "." + token_components.signature;    
 }
 
-
-async function setRecipeInstallConfig(alloyKey, recipeId, recipeInstallId, configs) {
+exports.setAuthForRecipeInstall = async (alloyKey, recipeId, recipeInstallId) => {
     const recipeKey = await buildAlloyJWT(recipeId, alloyKey)
     AlloyJS.AuthService.setAuthToken(recipeKey)    
     const recipeInstallJWT = await AlloyJS.RecipesService.getRecipeInstallToken(recipeInstallId)
     AlloyJS.AuthService.setAuthToken(recipeInstallJWT)    
+}
+
+
+exports.setRecipeInstallConfig = async (alloyKey, recipeId, recipeInstallId, configs)  => {
+    await this.setAuthForRecipeInstall(alloyKey, recipeId, recipeInstallId)
     const changeData = await AlloyJS.RecipesService.changeRecipeInstallConfig(recipeInstallId, configs)
     return changeData
 }
 
-exports.setRecipeInstallConfig = setRecipeInstallConfig
+exports.getTransactionDetails = async (alloyKey, recipeId, recipeInstallId, transactionId) => {
+    await this.setAuthForRecipeInstall(alloyKey, recipeId, recipeInstallId)
+    return await AlloyJS.TransactionService.getTransactionDetails(transactionId)
+}
+
+exports.addTransactionPanel = async (alloyKey, recipeId, recipeInstallId, panel) => {
+    await this.setAuthForRecipeInstall(alloyKey, recipeId, recipeInstallId)
+    return await AlloyJS.RecipesService.addTransactionPanel(panel)
+}
+
+

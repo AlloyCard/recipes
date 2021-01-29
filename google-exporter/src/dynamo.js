@@ -1,10 +1,11 @@
-var AWS = require('aws-sdk'),
-    region = "us-east-1",
+var AWS = require('aws-sdk')    
     
-var dynamoDb = new AWS.DynamoDB.DocumentClient();
+var dynamoDb = new AWS.DynamoDB.DocumentClient({
+    region: "us-east-1"
+});
 
 
-async function insert(table, item) {
+exports.insert = async (table, item) => {
     var params = {
         TableName:table,
         Item: item
@@ -21,4 +22,19 @@ async function insert(table, item) {
     })
 }
 
-exports.insert = insert
+exports.findById = async (table, id) => {
+    var params = {
+        TableName:table,
+        Key: {id: id}
+    }    
+
+    return new Promise((res, rej) => {
+        dynamoDb.get(params, function(err, data) {
+            if (err) {
+                rej(err)
+            } else {
+                res(data)
+            }
+        })
+    })
+}

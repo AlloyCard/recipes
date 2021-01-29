@@ -50,6 +50,7 @@ Resources:
       CodeUri: dist/
       Handler: app.redirectToApp
       Runtime: nodejs12.x
+      Timeout: 30
       Environment: 
         Variables:
           alloyKey: !Ref GoogleExporterAlloyKey
