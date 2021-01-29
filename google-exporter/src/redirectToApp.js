@@ -9,8 +9,9 @@ const alloy  = require('./alloy')
 const dynamo = require("./dynamo")
 const sheets = require("./sheets")
 
+exports.oAuthTableName = oAuthTableName
+
 exports.handler = async (event, context)  => {
-    console.log("HEREA")
     const alloyKey = process.env.alloyKey
     const recipeId = process.env.recipeId
 

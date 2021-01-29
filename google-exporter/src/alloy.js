@@ -45,13 +45,28 @@ async function buildAlloyJWT(recipeId, keyId) {
     return token_components.header + "." + token_components.payload + "." + token_components.signature;    
 }
 
-
-exports.setRecipeInstallConfig = async (alloyKey, recipeId, recipeInstallId, configs)  => {
+exports.setAuthForRecipeInstall = async (alloyKey, recipeId, recipeInstallId) => {
     const recipeKey = await buildAlloyJWT(recipeId, alloyKey)
     AlloyJS.AuthService.setAuthToken(recipeKey)    
     const recipeInstallJWT = await AlloyJS.RecipesService.getRecipeInstallToken(recipeInstallId)
     AlloyJS.AuthService.setAuthToken(recipeInstallJWT)    
+}
+
+
+exports.setRecipeInstallConfig = async (alloyKey, recipeId, recipeInstallId, configs)  => {
+    await this.setAuthForRecipeInstall(alloyKey, recipeId, recipeInstallId)
     const changeData = await AlloyJS.RecipesService.changeRecipeInstallConfig(recipeInstallId, configs)
     return changeData
 }
+
+exports.getTransactionDetails = async (alloyKey, recipeId, recipeInstallId, transactionId) => {
+    await this.setAuthForRecipeInstall(alloyKey, recipeId, recipeInstallId)
+    return await AlloyJS.TransactionService.getTransactionDetails(transactionId)
+}
+
+exports.addTransactionPanel = async (alloyKey, recipeId, recipeInstallId, panel) => {
+    await this.setAuthForRecipeInstall(alloyKey, recipeId, recipeInstallId)
+    return await AlloyJS.RecipesService.addTransactionPanel(panel)
+}
+
 
