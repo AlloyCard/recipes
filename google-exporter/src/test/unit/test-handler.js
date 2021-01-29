@@ -16,7 +16,8 @@ describe('Tests index', function () {
     })    
 
     it('test create sheet', async ()  => {
-        const credentials = await dynamo.findById("GoogleExporterOAuthTable", recipeInstallId)
+        const credentials = await dynamo.findById("GoogleExporterOAuthTable", "123456")
+        console.log(credentials)
         const mysheet = await sheet.createSheet(credentials.Item, "My Test Sheet")
         expect(mysheet.properties.title).to.be.equal("My Test Sheet")
     })

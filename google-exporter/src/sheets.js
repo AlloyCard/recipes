@@ -1,29 +1,16 @@
-const {google} = require('googleapis');
-const sheets = google.sheets('v4');
+
+const { GoogleSpreadsheet } = require('google-spreadsheet');
 
 
- 
 exports.createSheet = async (credentials, sheetName)  => {
+  const doc = new GoogleSpreadsheet();
+  
+  await doc.useRawAccessToken(credentials.access_token)
 
+  const newSheet = await doc.createNewSpreadsheetDocument({ title: sheetName });
+  console.log(doc)
+  return doc
 
-  const oauth2Client = new google.auth.OAuth2();
-  oauth2Client.setCredentials(credentials);    
-
-    const request = {
-        resource: {
-          properties: {
-            title: sheetName
-          }
-          
-        },
-    
-        auth: oauth2Client,
-      };
-
-
-    const resp = await sheets.spreadsheets.create(request)
-    const response = resp.data;
-    return response
 }
 
 

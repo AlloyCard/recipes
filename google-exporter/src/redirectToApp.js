@@ -31,20 +31,15 @@ exports.handler = async (event, context)  => {
     params.append('grant_type',"authorization_code")
     params.append('redirect_uri', redirect_uri)
 
-    console.log("HEREB")
     const resp = await axios.post('https://oauth2.googleapis.com/token', params, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     });        
 
-    console.log("HELLO1")
     const sheet = await sheets.createSheet(resp.data, sheetName)
-    console.log("HELLO2")
     await dynamo.insert(oAuthTableName, {id: recipeInstallId,  sheetId: sheet.spreadsheetId,   ...resp.data})    
-    console.log("HELLO3")
     await alloy.setRecipeInstallConfig(alloyKey, recipeId, recipeInstallId, {oauthCompleted: true, sheetName: sheetName});
-    console.log("HELLO4")
 
     return {
         'statusCode': 301,
