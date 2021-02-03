@@ -27,6 +27,15 @@ func (app *App) postTransaction(body []byte) {
 	// TODO
 	// - handler payload.Transaction.Type
 	// - fetch data on graphql api (type, merchant, value, datetime)
+
+	// const recipeKey = await buildAlloyJWT(recipeId, alloyKey)
+	// AlloyJS.AuthService.setAuthToken(recipeKey)
+
+	// const recipeInstallJWT = await AlloyJS.RecipesService.getRecipeInstallToken(recipeInstallId)
+	// AlloyJS.AuthService.setAuthToken(recipeInstallJWT)
+
+	// return await AlloyJS.TransactionService.getTransactionDetails(transactionId)
+
 	// - check if it is an subscription charge
 
 	app.Database.InsertTransaction(

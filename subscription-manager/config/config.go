@@ -12,6 +12,8 @@ type Config struct {
 	Database Database `mapstructure:",squash"`
 	LogLevel string   `mapstructure:"log_level"`
 	Server   Server   `mapstructure:",squash"`
+	AlloyKey string   `mapstructure:"alloy_key"`
+	RecipeId string   `mapstructure:"recipe_id"`
 }
 
 // Database summarises all Database variables.
