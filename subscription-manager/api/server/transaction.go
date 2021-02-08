@@ -24,6 +24,8 @@ func (app *App) postTransaction(body []byte) {
 		return
 	}
 
+	logrus.Debugf("%+2v", payload)
+
 	// TODO
 	// - handler payload.Transaction.Type
 	// - fetch data on graphql api (type, merchant, value, datetime)

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"subscription-manager/config"
-	"subscription-manager/server"
+	"subscription-manager/api/server"
+	"subscription-manager/internal/config"
 
 	"github.com/sirupsen/logrus"
 )

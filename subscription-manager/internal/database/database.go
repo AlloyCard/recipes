@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
-	"subscription-manager/config"
+	"subscription-manager/internal/config"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"

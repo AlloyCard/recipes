@@ -6,8 +6,9 @@ DOCKER_BASE_IMAGE=golang:1.15
 PORT=8092
 
 run-dev:
+	@clear
 	@echo "\e[1m\033[33mRunning on port ${PORT}\e[0m"
-	@make docker-command COMMAND="go run main.go"
+	@make docker-command COMMAND="go run cmd/subscriptionManager/main.go"
 
 debug:
 	@echo "\e[1m\033[33mDebug mode\e[0m"

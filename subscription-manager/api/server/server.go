@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"subscription-manager/database"
+	"subscription-manager/internal/database"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
