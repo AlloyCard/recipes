@@ -24,6 +24,9 @@ func Run(port int) {
 		logrus.WithError(err).Fatal("connection with database fail")
 	}
 
+	merchantSubscriptions = db.FetchMerchants()
+	logrus.Infof("\"%d\" subscription services registreds on database", len(merchantSubscriptions))
+
 	app := App{Database: db}
 
 	r := mux.NewRouter()

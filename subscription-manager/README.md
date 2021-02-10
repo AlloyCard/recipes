@@ -22,6 +22,12 @@ CREATE TABLE `transaction` (
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 );
 
+CREATE TABLE `recipe_subscription_manager`.`merchant` (
+  `id` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE);
+
 CREATE USER 'alloy_dba'@'localhost' IDENTIFIED BY 'aGVmjaSByA';
 GRANT SELECT, INSERT ON `transaction` TO 'alloy_dba'@'localhost';
 ```
