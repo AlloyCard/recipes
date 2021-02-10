@@ -12,9 +12,26 @@ type event struct {
 	Type string `json:"_alloyCardType"`
 }
 
+type transactionEvent struct {
+	Principal struct {
+		Type string `json:"_alloyCardType"`
+		ID   string `json:"entityID"`
+	} `json:"principal"`
+	Event struct {
+		Type        string `json:"_alloyCardType"`
+		Transaction struct {
+			Type string `json:"_alloyCardType"`
+			ID   string `json:"entityID"`
+		} `json:"transaction"`
+	} `json:"event"`
+	Type       string `json:"_alloyCardType"`
+	CreatedAt  int    `json:"createdAt"`
+	EventID    string `json:"eventId"`
+	WebhookURL string `json:"webhookUrl"`
+}
+
 func (app *App) webhookHandler(rw http.ResponseWriter, req *http.Request) {
-	// logrus.Debug("webhook endpoint trigged")
-	payload := event{}
+	payload := transactionEvent{}
 
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
@@ -27,10 +44,9 @@ func (app *App) webhookHandler(rw http.ResponseWriter, req *http.Request) {
 		logrus.WithError(err).Error("fail in decode body")
 		return
 	}
-	// logrus.Debugf("type: %+2v", payload.Type)
 
-	switch payload.Type {
+	switch payload.Event.Type {
 	case "com.alloycard.core.entities.transaction.TransactionCreatedEvent":
-		app.postTransaction(body)
+		app.postTransaction(payload)
 	}
 }
