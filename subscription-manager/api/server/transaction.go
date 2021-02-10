@@ -2,8 +2,21 @@ package server
 
 import (
 	"encoding/json"
+	"strings"
+
+	"subscription-manager/internal/alloy"
 
 	"github.com/sirupsen/logrus"
+)
+
+const (
+	// TODO how find recipeInstallID?
+	recipeInstallID = "80e0d144-c499-472f-8d04-ee3f254b1b4d"
+)
+
+var (
+	// TODO move to db
+	merchantSubscriptions = [...]string{"netflix", "amazon"}
 )
 
 type transactionEvent struct {
@@ -24,23 +37,26 @@ func (app *App) postTransaction(body []byte) {
 		return
 	}
 
-	logrus.Debugf("%+2v", payload)
+	merchantName, err := alloy.GetTransactionMerchant(payload.Transaction.ID, recipeInstallID)
+	if err != nil {
+		// TODO log/handler
+		return
+	}
 
-	// TODO
-	// - handler payload.Transaction.Type
-	// - fetch data on graphql api (type, merchant, value, datetime)
+	if isSubscription(merchantName) {
+		app.Database.InsertTransaction(
+			payload.Transaction.ID, payload.CreatedAt,
+		)
+	}
 
-	// const recipeKey = await buildAlloyJWT(recipeId, alloyKey)
-	// AlloyJS.AuthService.setAuthToken(recipeKey)
+}
 
-	// const recipeInstallJWT = await AlloyJS.RecipesService.getRecipeInstallToken(recipeInstallId)
-	// AlloyJS.AuthService.setAuthToken(recipeInstallJWT)
-
-	// return await AlloyJS.TransactionService.getTransactionDetails(transactionId)
-
-	// - check if it is an subscription charge
-
-	app.Database.InsertTransaction(
-		payload.Transaction.ID, payload.CreatedAt,
-	)
+func isSubscription(merchantName string) bool {
+	merc := strings.ToLower(merchantName)
+	for _, name := range merchantSubscriptions {
+		if merc == name {
+			return true
+		}
+	}
+	return false
 }
