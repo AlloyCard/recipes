@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"subscription-manager/internal/config"
-	"subscription-manager/internal/jwt"
+	"subscription-manager/pkg/jwt"
 
 	"github.com/sirupsen/logrus"
 )

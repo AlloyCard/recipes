@@ -3,7 +3,7 @@ package server
 import (
 	"strings"
 
-	"subscription-manager/internal/alloy"
+	"subscription-manager/pkg/alloy"
 )
 
 var (
