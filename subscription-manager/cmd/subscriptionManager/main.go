@@ -7,12 +7,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func main() {
-	cfg, err := config.Load()
-	if err != nil {
-		logrus.WithError(err).Fatal("Error in load Enviromnts variables.")
-	}
+var (
+	cfg = config.Load()
+)
 
+func main() {
 	loglvl, err := logrus.ParseLevel(cfg.LogLevel)
 	if err != nil {
 		logrus.WithError(err).Fatalf(

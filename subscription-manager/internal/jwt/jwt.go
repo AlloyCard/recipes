@@ -2,17 +2,21 @@ package jwt
 
 import (
 	"fmt"
+	"subscription-manager/internal/config"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	helper "github.com/dgrijalva/jwt-go/test"
 )
 
+var (
+	cfg = config.Load()
+)
+
 // BuildJWT buildwith private key
 func BuildJWT(recipeID string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
-		// TODO move timeout to env
-		"exp":                  time.Now().UTC().Add(time.Second * 60).Unix(),
+		"exp":                  time.Now().UTC().Add(time.Second * time.Duration(cfg.JWTTimeout)).Unix(),
 		"iat":                  time.Now().UTC().Unix(),
 		"iss":                  "AlloyCard",
 		"custom:principalId":   recipeID,
@@ -20,8 +24,7 @@ func BuildJWT(recipeID string) (string, error) {
 	})
 	token.Header["kid"] = fmt.Sprintf(`AlloyPrincipal-%s`, recipeID)
 
-	// TODO move pem's path to env
-	privateKey := helper.LoadRSAPrivateKeyFromDisk("./jwtRSA256-private.pem")
+	privateKey := helper.LoadRSAPrivateKeyFromDisk(cfg.JWTKeyPath)
 
 	return token.SignedString(privateKey)
 }

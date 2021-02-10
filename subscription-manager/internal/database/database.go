@@ -9,6 +9,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+var (
+	cfg = config.Load()
+)
+
 // Database struct
 type Database struct {
 	Connection *sqlx.DB
@@ -17,7 +21,6 @@ type Database struct {
 // New database instance
 func New() (*Database, error) {
 	ctx, _ := context.WithCancel(context.Background())
-	cfg, _ := config.Load()
 
 	dsn := fmt.Sprintf(cfg.Database.DSN)
 

@@ -6,19 +6,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"subscription-manager/internal/config"
 	"subscription-manager/internal/jwt"
 
 	"github.com/sirupsen/logrus"
 )
 
 var (
-	url    = "http://localhost:8080/graphql"
+	cfg    = config.Load()
 	client = &http.Client{}
-)
-
-const (
-	// TODO move to env
-	recipeID = "e39d4518-1dd4-4bff-884d-51ca6162d33e"
 )
 
 // GetTransactionMerchant fetch transaction's merchant name
@@ -48,7 +44,7 @@ func GetTransactionMerchant(transactionID string, recipeInstallID string) (strin
 }
 
 func createRecipeInstalToken(recipeInstallID string) (string, error) {
-	recipeToken, err := jwt.BuildJWT(recipeID)
+	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
 	if err != nil {
 		logrus.WithError(err).Error("Fail in create recipe token")
 		return "", err
@@ -74,7 +70,9 @@ func createRecipeInstalToken(recipeInstallID string) (string, error) {
 }
 
 func reqAlloyAPI(query, token string, response interface{}) error {
-	req, err := http.NewRequest("POST", url, strings.NewReader(query))
+	req, err := http.NewRequest("POST",
+		fmt.Sprintf("%sgraphql", cfg.AlloyURL),
+		strings.NewReader(query))
 	if err != nil {
 		return err
 	}
