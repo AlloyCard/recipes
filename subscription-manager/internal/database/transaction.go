@@ -8,7 +8,7 @@ import (
 )
 
 // InsertTransaction to Database
-func (db *Database) InsertTransaction(id string, merchant string, amount float32, createdAt int) error {
+func (db *Database) InsertTransaction(id, merchant string, amount float32, createdAt int) error {
 	logrus.Infof("Inserting transaction\"%s\" to database", id)
 
 	var query string = fmt.Sprintf(

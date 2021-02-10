@@ -25,34 +25,34 @@ type Transaction struct {
 }
 
 // GetTransaction fetch transaction's merchant name
-func GetTransaction(transactionID string, recipeInstallID string) (*Transaction, error) {
-	token, err := createRecipeInstalToken(recipeInstallID)
+func GetTransaction(transactionID, recipeInstallID string) (*Transaction, error) {
+	token, err := getRecipeInstalToken(recipeInstallID)
 	if err != nil {
 		return nil, err
 	}
 
+	return getTransaction(transactionID, token)
+}
+
+func getTransaction(id, token string) (*Transaction, error) {
 	response := struct {
 		Data struct {
 			Transaction Transaction `json:"transaction"`
 		} `json:"data"`
 	}{}
 
-	err = reqAlloyAPI(fmt.Sprintf(
+	err := reqAlloyAPI(fmt.Sprintf(
 		"{\"query\":\"query{transaction(id:\\\"%s\\\"){merchantName,amount,transactionDate}}\",\"variables\":{}}",
-		transactionID), token, &response)
+		id), token, &response)
 	if err != nil {
 		logrus.WithError(err).Error("Fail in get transaction on Alloy API")
 		return nil, err
 	}
 
-	if response.Data.Transaction.MerchantName == "" {
-		return nil, fmt.Errorf("Merchant name empty")
-	}
-
 	return &response.Data.Transaction, nil
 }
 
-func createRecipeInstalToken(recipeInstallID string) (string, error) {
+func getRecipeInstalToken(recipeInstallID string) (string, error) {
 	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
 	if err != nil {
 		logrus.WithError(err).Error("Fail in create recipe token")
@@ -73,10 +73,6 @@ func createRecipeInstalToken(recipeInstallID string) (string, error) {
 	if err != nil {
 		logrus.WithError(err).Error("Fail in get recipe install token on Alloy API")
 		return "", err
-	}
-
-	if response.Data.RecipeInstall.Token == "" {
-		return "", fmt.Errorf("Recipe Install Token empty")
 	}
 
 	return response.Data.RecipeInstall.Token, nil
