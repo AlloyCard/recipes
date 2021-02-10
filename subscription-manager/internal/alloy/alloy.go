@@ -17,34 +17,39 @@ var (
 	client = &http.Client{}
 )
 
-// GetTransactionMerchant fetch transaction's merchant name
-func GetTransactionMerchant(transactionID string, recipeInstallID string) (string, error) {
+// Transaction data
+type Transaction struct {
+	MerchantName    string  `json:"merchantName"`
+	Amount          float32 `json:"amount"`
+	TransactionDate int     `json:"transactionDate"`
+}
+
+// GetTransaction fetch transaction's merchant name
+func GetTransaction(transactionID string, recipeInstallID string) (*Transaction, error) {
 	token, err := createRecipeInstalToken(recipeInstallID)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	response := struct {
 		Data struct {
-			Transaction struct {
-				MerchantName string `json:"merchantName"`
-			} `json:"transaction"`
+			Transaction Transaction `json:"transaction"`
 		} `json:"data"`
 	}{}
 
 	err = reqAlloyAPI(fmt.Sprintf(
-		"{\"query\":\"query{transaction(id:\\\"%s\\\"){merchantName}}\",\"variables\":{}}",
+		"{\"query\":\"query{transaction(id:\\\"%s\\\"){merchantName,amount,transactionDate}}\",\"variables\":{}}",
 		transactionID), token, &response)
 	if err != nil {
 		logrus.WithError(err).Error("Fail in get transaction on Alloy API")
-		return "", err
+		return nil, err
 	}
 
 	if response.Data.Transaction.MerchantName == "" {
-		return "", fmt.Errorf("Merchant name empty")
+		return nil, fmt.Errorf("Merchant name empty")
 	}
 
-	return response.Data.Transaction.MerchantName, nil
+	return &response.Data.Transaction, nil
 }
 
 func createRecipeInstalToken(recipeInstallID string) (string, error) {
