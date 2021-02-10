@@ -11,8 +11,9 @@ import (
 // BuildJWT buildwith private key
 func BuildJWT(recipeID string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
-		"exp":                  time.Now().UTC().Add(time.Second * 60).UnixNano(),
-		"iat":                  time.Now().UTC().UnixNano(),
+		// TODO move timeout to env
+		"exp":                  time.Now().UTC().Add(time.Second * 60).Unix(),
+		"iat":                  time.Now().UTC().Unix(),
 		"iss":                  "AlloyCard",
 		"custom:principalId":   recipeID,
 		"custom:principalType": "com.alloycard.core.entities.recipe.Recipe",
