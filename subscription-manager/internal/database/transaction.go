@@ -9,15 +9,16 @@ import (
 
 // InsertTransaction to Database
 func (db *Database) InsertTransaction(id string, createdAt int) error {
+	logrus.Debug("Inserting transaction")
+
 	var query string = fmt.Sprintf(
 		"INSERT INTO transaction VALUES ('%s', FROM_UNIXTIME(%d));", id, createdAt,
 	)
-	return db.executeQuery(query)
+	return db.insert(query)
 }
 
-func (db *Database) executeQuery(query string) error {
-	var ids []int
-	err := db.Connection.Select(&ids, query)
+func (db *Database) insert(query string) error {
+	err := db.Connection.Select(&[]int{}, query)
 	if err != nil {
 		logrus.WithError(err).Errorf("fail to execute query %s", query)
 		return err

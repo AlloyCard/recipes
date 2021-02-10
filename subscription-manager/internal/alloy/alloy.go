@@ -40,6 +40,10 @@ func GetTransactionMerchant(transactionID string, recipeInstallID string) (strin
 		return "", err
 	}
 
+	if response.Data.Transaction.MerchantName == "" {
+		return "", fmt.Errorf("Merchant name empty")
+	}
+
 	return response.Data.Transaction.MerchantName, nil
 }
 
@@ -64,6 +68,10 @@ func createRecipeInstalToken(recipeInstallID string) (string, error) {
 	if err != nil {
 		logrus.WithError(err).Error("Fail in get recipe install token on Alloy API")
 		return "", err
+	}
+
+	if response.Data.RecipeInstall.Token == "" {
+		return "", fmt.Errorf("Recipe Install Token empty")
 	}
 
 	return response.Data.RecipeInstall.Token, nil
