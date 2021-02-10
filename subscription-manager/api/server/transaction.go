@@ -15,7 +15,7 @@ const (
 )
 
 var (
-	// TODO move to db
+	// TODO load from db
 	merchantSubscriptions = [...]string{"netflix", "amazon"}
 )
 
@@ -39,7 +39,6 @@ func (app *App) postTransaction(body []byte) {
 
 	merchantName, err := alloy.GetTransactionMerchant(payload.Transaction.ID, recipeInstallID)
 	if err != nil {
-		// TODO log/handler
 		return
 	}
 

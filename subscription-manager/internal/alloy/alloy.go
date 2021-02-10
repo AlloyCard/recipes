@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"subscription-manager/internal/jwt"
+
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -23,7 +25,6 @@ const (
 func GetTransactionMerchant(transactionID string, recipeInstallID string) (string, error) {
 	token, err := createRecipeInstalToken(recipeInstallID)
 	if err != nil {
-		// TODO log/handler
 		return "", err
 	}
 
@@ -39,7 +40,7 @@ func GetTransactionMerchant(transactionID string, recipeInstallID string) (strin
 		"{\"query\":\"query{transaction(id:\\\"%s\\\"){merchantName}}\",\"variables\":{}}",
 		transactionID), token, &response)
 	if err != nil {
-		// TODO log/handler
+		logrus.WithError(err).Error("Fail in get transaction on Alloy API")
 		return "", err
 	}
 
@@ -49,8 +50,8 @@ func GetTransactionMerchant(transactionID string, recipeInstallID string) (strin
 func createRecipeInstalToken(recipeInstallID string) (string, error) {
 	recipeToken, err := jwt.BuildJWT(recipeID)
 	if err != nil {
-		// TODO log/handler
-		return "", nil
+		logrus.WithError(err).Error("Fail in create recipe token")
+		return "", err
 	}
 
 	response := struct {
@@ -65,12 +66,7 @@ func createRecipeInstalToken(recipeInstallID string) (string, error) {
 		"{\"query\":\"mutation{recipeInstall(id:\\\"%s\\\"){createToken}}\",\"variables\":{}}",
 		recipeInstallID), recipeToken, &response)
 	if err != nil {
-		// TODO log/handler
-		return "", err
-	}
-
-	if err != nil {
-		// TODO log/handler
+		logrus.WithError(err).Error("Fail in get recipe install token on Alloy API")
 		return "", err
 	}
 
@@ -80,7 +76,6 @@ func createRecipeInstalToken(recipeInstallID string) (string, error) {
 func reqAlloyAPI(query, token string, response interface{}) error {
 	req, err := http.NewRequest("POST", url, strings.NewReader(query))
 	if err != nil {
-		//   TODO log/handler error
 		return err
 	}
 
@@ -89,20 +84,17 @@ func reqAlloyAPI(query, token string, response interface{}) error {
 
 	res, err := client.Do(req)
 	if err != nil {
-		//   TODO log/handler error
 		return err
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		//   TODO log/handler error
 		return err
 	}
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		// TODO log/handler
 		return err
 	}
 
