@@ -4,10 +4,9 @@ Helps the user to follow your charges from subscription services and manage them
 
 ## Routes
 
-| Method |           Route            |         Description       |
-|--------|----------------------------|---------------------------|
-| POST   | `/users`                    | insert new user          |
-| POST   | `/users/{code}/transactions` | insert transaction      |
+| Method |           Route            |             Description            |
+|--------|----------------------------|------------------------------------|
+| POST   | `/webhook`                 | webhook resource to consume events |
 
 ## Migration
 
@@ -21,6 +20,9 @@ CREATE TABLE `recipe_subscription_manager`.`merchant` (
   `name` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE);
+
+INSERT INTO `recipe_subscription_manager`.`merchant`
+VALUES (UUID(), "Netflix"), (UUID(), "Amazon"), (UUID(), "Youtube");
 
 CREATE TABLE `recipe_subscription_manager`.`transaction` (
   `id` VARCHAR(45) NOT NULL,

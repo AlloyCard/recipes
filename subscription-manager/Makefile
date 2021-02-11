@@ -2,13 +2,28 @@
 
 APP_NAME?=subscription-manager
 APP_DIR = /go/src/github.com/alloycard/${APP_NAME}
+DOCKER_STAGE ?= release
+CONTAINER_NAME=${APP_NAME}-${DOCKER_STAGE}
+DOCKER_IMAGE_NAME := alloycard/${CONTAINER_NAME}:latest
 DOCKER_BASE_IMAGE=golang:1.15
 PORT=8092
+
+build-docker-image:
+	@echo "\e[1m\033[33mBuilding docker image from Dockerfile\e[0m"
+	@docker build --rm --target ${DOCKER_STAGE} . --tag ${DOCKER_IMAGE_NAME}
 
 run-dev:
 	@clear
 	@echo "\e[1m\033[33mRunning on port ${PORT}\e[0m"
 	@make docker-command COMMAND="go run cmd/subscriptionManager/main.go"
+
+run-release:
+	@echo "\e[1m\033[33mRunning on port ${PORT}\e[0m"
+	@docker run --rm \
+		--env-file .env \
+		-p ${PORT}:${PORT} \
+		--name ${CONTAINER_NAME} \
+		${DOCKER_IMAGE_NAME}
 
 debug:
 	@echo "\e[1m\033[33mDebug mode\e[0m"
