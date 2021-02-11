@@ -7,7 +7,7 @@ import (
 
 // FetchMerchants to Database
 func (db *Database) FetchMerchants() []string {
-	var query string = "SELECT name FROM recipe_subscription_manager.merchant;"
+	var query string = "SELECT name FROM merchant;"
 	merchants := []string{}
 	_ = db.selectRows(query, &merchants)
 	return merchants
