@@ -19,12 +19,12 @@ type transactionEvent struct {
 	} `json:"principal"`
 	Event struct {
 		Type        string `json:"_alloyCardType"`
+		CreatedAt   int    `json:"createdAt"`
+		EventID     string `json:"eventId"`
 		Transaction struct {
 			Type string `json:"_alloyCardType"`
 			ID   string `json:"entityID"`
 		} `json:"transaction"`
-		CreatedAt int    `json:"createdAt"`
-		EventID   string `json:"eventId"`
 	} `json:"event"`
 	WebhookURL string `json:"webhookUrl"`
 }
