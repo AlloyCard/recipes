@@ -3,6 +3,7 @@ package server
 import (
 	"strings"
 
+	"subscription-manager/internal/database"
 	"subscription-manager/pkg/alloy"
 
 	"github.com/sirupsen/logrus"
@@ -42,13 +43,8 @@ func (app *App) postTransaction(payload transactionEvent) {
 		return
 	}
 
-	var total float32 = 0
-	for _, trx := range trxs {
-		total += trx.Amount
-	}
-
 	err = alloy.AddSubscriptionPanel(payload.Principal.ID, payload.Event.Transaction.ID,
-		trxs[0].CreatedAt, total)
+		trxs[0].CreatedAt, sumTotalAmount(trxs))
 	if err != nil {
 		logrus.WithError(err).Error("Fail to get addPanel on Alloy API")
 		return
@@ -63,4 +59,12 @@ func isSubscription(merchant string) bool {
 		}
 	}
 	return false
+}
+
+func sumTotalAmount(transactions []database.Transaction) float32 {
+	var total float32 = 0
+	for _, trx := range transactions {
+		total += trx.Amount
+	}
+	return total
 }
