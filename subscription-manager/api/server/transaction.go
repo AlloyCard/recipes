@@ -27,11 +27,23 @@ func (app *App) postTransaction(payload transactionEvent) {
 	}
 
 	app.Database.InsertTransaction(
-		payload.Event.Transaction.ID, transaction.MerchantName, transaction.Amount, transaction.TransactionDate)
+		payload.Event.Transaction.ID, transaction.MerchantName, transaction.Amount,
+		transaction.TransactionDate)
 
-	// TODO
-	// - fetch startDate and amount
-	err = alloy.AddSubscriptionPanel(payload.Principal.ID, payload.Event.Transaction.ID, startDate, amount)
+	trxs, err := app.Database.FetchTransactionsByRecipeInstallAndMerchant(
+		payload.Principal.ID, transaction.MerchantName)
+	if err != nil {
+		// TODO log
+		return
+	}
+
+	var total float32 = 0
+	for _, trx := range trxs {
+		total += trx.Amount
+	}
+
+	err = alloy.AddSubscriptionPanel(payload.Principal.ID, payload.Event.Transaction.ID,
+		trxs[0].CreatedAt, total)
 	if err != nil {
 		// TODO log
 		return
