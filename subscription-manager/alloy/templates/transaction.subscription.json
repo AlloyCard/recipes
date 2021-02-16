@@ -1,5 +1,5 @@
 {
-  "name": "nonSubscription",
+  "name": "subscription",
   "components": {
     "mainView": {
       "type": "View",
@@ -18,12 +18,22 @@
             }
           },
           "children": {
-            "alertLabel": {
-              "type": "Button",
+            "start": {
+              "type": "Text",
               "props": {
-                "title": "Add as Subscription",
-                "url": "{{endpoint}}",
-                "submit": false
+                "style": {
+                  "fontSize": 15
+                },
+                "label": "Start Date:\t{{startDate}}"
+              }
+            },
+            "total": {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "fontSize": 15
+                },
+                "label": "Total this year:\t{{total}}"
               }
             }
           }
