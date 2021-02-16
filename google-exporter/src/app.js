@@ -2,9 +2,9 @@
 
  const redirectToApp = require("./redirectToApp")
 const requestAuth = require("./requestAuth")
-const webhook = require("./webhook") 
+const webhook = require("./webhook")
 
-exports.redirectToApp = async (event, context) => {    
+exports.redirectToApp = async (event, context) => {
     return await redirectToApp.handler(event, context)
 }
 exports.requestAuth = async (event, context) => {
