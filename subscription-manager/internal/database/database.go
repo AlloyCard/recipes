@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -20,6 +21,7 @@ type Database struct {
 
 // New database instance
 func New() (*Database, error) {
+	logrus.Info("Building database connection")
 	ctx, _ := context.WithCancel(context.Background())
 
 	dsn := fmt.Sprintf(cfg.Database.DSN)

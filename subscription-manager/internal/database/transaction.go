@@ -19,7 +19,7 @@ type Transaction struct {
 
 // InsertTransaction to Database
 func (db *Database) InsertTransaction(id, merchant string, amount float32, createdAt int) error {
-	logrus.Infof("Inserting transaction\"%s\" to database", id)
+	logrus.WithField("transactionId", id).Infof("Inserting transaction to database")
 
 	var query string = fmt.Sprintf(
 		"INSERT INTO transaction VALUES ('%s', '%s', '%.2f', FROM_UNIXTIME(%d));", id, merchant, amount, createdAt/1000,

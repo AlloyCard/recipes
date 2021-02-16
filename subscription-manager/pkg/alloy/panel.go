@@ -21,9 +21,9 @@ type addPanelResponse struct {
 
 // AddSubscriptionPanel add subscription panel
 func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.Time, total float32) error {
+	logrus.New().WithField("transactionId", transactionID).Info("Adding subscription panel")
 	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
 	if err != nil {
-		logrus.WithError(err).Error("Fail in create recipe token")
 		return err
 	}
 	response := addPanelResponse{}
@@ -32,7 +32,6 @@ func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.
 		"{\"query\":\"mutation{recipeInstall(id:\\\"%s\\\"){addPanel(templateFileName:\"/transaction.subscription.json\" data:\"{\"startDate\":\\\"%s\\\",\"total\":\\\"%.2f\\\"}\" entity:{entityID:\\\"%s\\\"type:\"com.alloycard.core.entities.transaction.Transaction\"}){id data}}}\",\"variables\":{}}",
 		recipeInstallID, startDate.Format("January 2, 2006"), total, transactionID), recipeToken, &response)
 	if err != nil {
-		logrus.WithError(err).Error("Fail in get recipe install token on Alloy API")
 		return err
 	}
 
@@ -41,9 +40,9 @@ func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.
 
 // AddNonSubscriptionPanel add non subscription panel
 func AddNonSubscriptionPanel(recipeInstallID, transactionID string) error {
+	logrus.New().WithField("transactionId", transactionID).Info("Adding nonsubscription panel")
 	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
 	if err != nil {
-		logrus.WithError(err).Error("Fail in create recipe token")
 		return err
 	}
 	response := addPanelResponse{}
@@ -52,7 +51,6 @@ func AddNonSubscriptionPanel(recipeInstallID, transactionID string) error {
 		"{\"query\":\"mutation{recipeInstall(id:\\\"%s\\\"){addPanel(templateFileName:\"/transaction.subscription.json\" data:\"{}\" entity:{entityID:\\\"%s\\\"type:\"com.alloycard.core.entities.transaction.Transaction\"}){id data}}}\",\"variables\":{}}",
 		recipeInstallID, transactionID), recipeToken, &response)
 	if err != nil {
-		logrus.WithError(err).Error("Fail in get recipe install token on Alloy API")
 		return err
 	}
 

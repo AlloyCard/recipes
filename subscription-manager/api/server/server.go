@@ -18,6 +18,7 @@ type App struct {
 
 // Run start app App
 func Run(port int) {
+	logrus.Info("Start running subscription manager server")
 	db, err := database.New()
 	defer db.Connection.Close()
 	if err != nil {
