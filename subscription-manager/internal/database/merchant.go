@@ -9,14 +9,16 @@ import (
 func (db *Database) FetchMerchants() []string {
 	var query string = "SELECT name FROM merchant;"
 	merchants := []string{}
-	_ = db.selectRows(query, &merchants)
+	db.selectRows(query, &merchants)
 	return merchants
 }
 
 func (db *Database) selectRows(query string, resp *[]string) error {
 	err := db.Connection.Select(resp, query)
 	if err != nil {
-		logrus.WithError(err).Errorf("fail to execute query %s", query)
+		logrus.WithError(err).
+			WithField("query", query).
+			Error("fail to execute query")
 		return err
 	}
 

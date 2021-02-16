@@ -14,8 +14,9 @@ var (
 func main() {
 	loglvl, err := logrus.ParseLevel(cfg.LogLevel)
 	if err != nil {
-		logrus.WithError(err).Fatalf(
-			"Error in set log level %s.", cfg.LogLevel)
+		logrus.WithError(err).
+			WithField("level", cfg.LogLevel).
+			Fatal("Error in set log level")
 	}
 	logrus.SetLevel(loglvl)
 

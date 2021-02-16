@@ -28,6 +28,7 @@ CREATE TABLE `recipe_subscription_manager`.`transaction` (
   `id` VARCHAR(45) NOT NULL,
   `merchant` VARCHAR(45) NOT NULL,
   `amount` DECIMAL(6,2) NOT NULL,
+  `recipe_install` VARCHAR(45) NOT NULL,
   `created_at` DATETIME NOT NULL,
 
   PRIMARY KEY (`id`),
