@@ -36,7 +36,6 @@ func (db *Database) FetchTransactionsByRecipeInstallAndMerchant(recipeInstallID,
 
 	err := db.Connection.Select(&response, query)
 	if err != nil {
-		logrus.WithError(err).Errorf("fail to execute query %s", query)
 		return nil, err
 	}
 
@@ -46,7 +45,6 @@ func (db *Database) FetchTransactionsByRecipeInstallAndMerchant(recipeInstallID,
 func (db *Database) insert(query string) error {
 	err := db.Connection.Select(&[]int{}, query)
 	if err != nil {
-		logrus.WithError(err).Errorf("fail to execute query %s", query)
 		return err
 	}
 
