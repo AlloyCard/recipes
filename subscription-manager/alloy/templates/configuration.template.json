@@ -1,12 +1,12 @@
 {
-    "name": "configuration",
-    "components": {
-        "submitButton": {
-            "type": "Button",
-            "props": {
-                "submit": true,
-                "title": "Install"
-            }
-        }
+  "name": "SubscriptionConfigTemplate",
+  "components": {
+    "submitButton": {
+      "type": "Button",
+      "props": {
+        "submit": true,
+        "title": "Install"
+      }
     }
+  }
 }

@@ -1,0 +1,44 @@
+{
+  "name": "subscription",
+  "components": {
+    "mainView": {
+      "type": "View",
+      "props": {
+        "style": {
+          "flexDirection": "row",
+          "justifyContent": "space-between"
+        }
+      },
+      "children": {
+        "message": {
+          "type": "View",
+          "props": {
+            "style": {
+              "alignItems": "center"
+            }
+          },
+          "children": {
+            "start": {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "fontSize": 15
+                },
+                "label": "Start Date:\t{{startDate}}"
+              }
+            },
+            "total": {
+              "type": "Text",
+              "props": {
+                "style": {
+                  "fontSize": 15
+                },
+                "label": "Total this year:\t{{total}}"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
