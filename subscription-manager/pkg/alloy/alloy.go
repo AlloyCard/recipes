@@ -2,7 +2,6 @@ package alloy
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -20,10 +19,11 @@ var (
 
 // Transaction data
 type Transaction struct {
-	ID              string  `json:"id"`
-	MerchantName    string  `json:"merchantName"`
-	Amount          float32 `json:"amount"`
-	TransactionDate int     `json:"transactionDate"`
+	ID              string     `json:"id"`
+	MerchantName    string     `json:"merchantName"`
+	Amount          float32    `json:"amount"`
+	TransactionDate int        `json:"transactionDate"`
+	Errors          []struct{} `json:"errors"`
 }
 
 // GetTransaction fetch transaction's merchant name
@@ -38,8 +38,8 @@ func GetTransaction(transactionID, recipeInstallID string) (*Transaction, error)
 		return nil, err
 	}
 
-	if trx.ID == "" {
-		return nil, errors.New("transaction not found")
+	if len(trx.Errors) != 0 {
+		return nil, fmt.Errorf("%+2v", trx.Errors)
 	}
 
 	return trx, nil
