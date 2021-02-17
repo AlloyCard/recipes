@@ -19,7 +19,7 @@ func (app *App) postTransaction(payload transactionEvent) {
 		logrus.WithError(err).Error("Fail to get transaction from Alloy API")
 		return
 	}
-	logrus.Debugf("%+2v", trx)
+	logrus.Debugf("%+2v", *trx)
 
 	if !isSubscription(trx.MerchantName) {
 		err = alloy.AddNonSubscriptionPanel(payload.Principal.ID, payload.Event.Transaction.ID)

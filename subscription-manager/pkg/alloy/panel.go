@@ -21,7 +21,7 @@ type addPanelResponse struct {
 
 // AddSubscriptionPanel add subscription panel
 func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.Time, total float32) error {
-	logrus.New().WithField("transactionId", transactionID).Info("Adding subscription panel")
+	logrus.WithField("transactionId", transactionID).Info("Adding subscription panel")
 	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.
 
 // AddNonSubscriptionPanel add non subscription panel
 func AddNonSubscriptionPanel(recipeInstallID, transactionID string) error {
-	logrus.New().WithField("transactionId", transactionID).Info("Adding nonsubscription panel")
+	logrus.WithField("transactionId", transactionID).Info("Adding nonsubscription panel")
 	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
 	if err != nil {
 		return err
