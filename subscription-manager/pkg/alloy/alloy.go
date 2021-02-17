@@ -2,6 +2,7 @@ package alloy
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -19,6 +20,7 @@ var (
 
 // Transaction data
 type Transaction struct {
+	ID              string  `json:"id"`
 	MerchantName    string  `json:"merchantName"`
 	Amount          float32 `json:"amount"`
 	TransactionDate int     `json:"transactionDate"`
@@ -31,7 +33,16 @@ func GetTransaction(transactionID, recipeInstallID string) (*Transaction, error)
 		return nil, err
 	}
 
-	return getTransaction(transactionID, token)
+	trx, err := getTransaction(transactionID, token)
+	if err != nil {
+		return nil, err
+	}
+
+	if trx.ID == "" {
+		return nil, errors.New("transaction not found")
+	}
+
+	return trx, nil
 }
 
 func getTransaction(id, token string) (*Transaction, error) {
@@ -42,7 +53,7 @@ func getTransaction(id, token string) (*Transaction, error) {
 	}{}
 
 	err := reqAlloyAPI(fmt.Sprintf(
-		"{\"query\":\"query{transaction(id:\\\"%s\\\"){merchantName,amount,transactionDate}}\",\"variables\":{}}",
+		"{\"query\":\"query{transaction(id:\\\"%s\\\"){id,merchantName,amount,transactionDate}}\",\"variables\":{}}",
 		id), token, &response)
 	if err != nil {
 		logrus.WithError(err).Error("Fail in get transaction on Alloy API")
@@ -80,7 +91,7 @@ func getRecipeInstalToken(recipeInstallID string) (string, error) {
 
 func reqAlloyAPI(query, token string, response interface{}) error {
 	req, err := http.NewRequest("POST",
-		fmt.Sprintf("%sgraphql", cfg.AlloyURL),
+		fmt.Sprintf("%s/graphql", cfg.AlloyURL),
 		strings.NewReader(query))
 	if err != nil {
 		return err
