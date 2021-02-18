@@ -27,12 +27,9 @@ func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.
 	}
 	response := addPanelResponse{}
 
-	query := fmt.Sprintf(
+	err = reqAlloyAPI(fmt.Sprintf(
 		"{\"query\":\"mutation{recipeInstall(id:\\\"%s\\\"){addPanel(templateFileName:\\\"/transaction.subscription.json\\\" data:\\\"{\\\\\\\"startDate\\\\\\\":\\\\\\\"%s\\\\\\\",\\\\\\\"total\\\\\\\":\\\\\\\"%.2f\\\\\\\"}\\\" entity:{entityID:\\\"%s\\\" type:\\\"com.alloycard.core.entities.transaction.Transaction\\\"}){id}}}\",\"variables\":{}}",
-		recipeInstallID, startDate.Format("January 2, 2006"), total, transactionID)
-
-	logrus.WithField("query", query).Debug("fetch query to add panel")
-	err = reqAlloyAPI(query, recipeToken, &response)
+		recipeInstallID, startDate.Format("January 2, 2006"), total, transactionID), recipeToken, &response)
 	if err != nil {
 		return err
 	}

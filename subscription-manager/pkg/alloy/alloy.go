@@ -95,6 +95,7 @@ func getRecipeInstalToken(recipeInstallID string) (string, error) {
 }
 
 func reqAlloyAPI(query, token string, response interface{}) error {
+	logrus.WithField("query", query).Debug("request query to Alloy API")
 	req, err := http.NewRequest("POST",
 		fmt.Sprintf("%s/graphql", cfg.AlloyURL),
 		strings.NewReader(query))
