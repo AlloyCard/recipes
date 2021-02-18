@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"strings"
 
 	"subscription-manager/internal/database"
@@ -14,12 +15,13 @@ var (
 )
 
 func (app *App) postTransaction(payload transactionEvent) {
+	logrus.WithField("payload", fmt.Sprintf("%+2v", payload)).Debug("request payload")
 	trx, err := alloy.GetTransaction(payload.Event.Transaction.ID, payload.Principal.ID)
 	if err != nil {
 		logrus.WithError(err).Error("Fail to get transaction from Alloy API")
 		return
 	}
-	logrus.Debugf("%+2v", *trx)
+	logrus.WithField("transaction", fmt.Sprintf("%+2v", *trx)).Debug("transaction from Alloy API")
 
 	if !isSubscription(trx.MerchantName) {
 		err = alloy.AddNonSubscriptionPanel(payload.Principal.ID, payload.Event.Transaction.ID)

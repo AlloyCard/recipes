@@ -10,7 +10,7 @@ import (
 
 // Transaction financial
 type Transaction struct {
-	ID            int       `db:"id"`
+	ID            string    `db:"id"`
 	Merchant      string    `db:"merchant"`
 	Amount        float32   `db:"amount"`
 	RecipeInstall string    `db:"recipe_install"`
