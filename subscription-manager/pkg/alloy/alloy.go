@@ -2,6 +2,7 @@ package alloy
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -40,6 +41,10 @@ func GetTransaction(transactionID, recipeInstallID string) (*Transaction, error)
 
 	if len(trx.Errors) != 0 {
 		return nil, fmt.Errorf("%+2v", trx.Errors)
+	}
+
+	if trx.ID == "" {
+		return nil, errors.New("transaction not found")
 	}
 
 	return trx, nil

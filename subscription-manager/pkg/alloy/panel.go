@@ -49,7 +49,7 @@ func AddNonSubscriptionPanel(recipeInstallID, transactionID string) error {
 	response := addPanelResponse{}
 
 	err = reqAlloyAPI(fmt.Sprintf(
-		"{\"query\":\"mutation{recipeInstall(id:\\\"%s\\\"){addPanel(templateFileName:\\\"/transaction.not-subscription.json\\\" data:\\\"{}\\\" entity:{entityID:\\\"%s\\\" type:\\\"com.alloycard.core.entities.transaction.Transaction\\\"}){id data}}}\",\"variables\":{}}",
+		"{\"query\":\"mutation{recipeInstall(id:\\\"%s\\\"){addPanel(templateFileName:\\\"/transaction.nonsubscription.json\\\" data:\\\"{}\\\" entity:{entityID:\\\"%s\\\" type:\\\"com.alloycard.core.entities.transaction.Transaction\\\"}){id data}}}\",\"variables\":{}}",
 		recipeInstallID, transactionID), recipeToken, &response)
 	if err != nil {
 		return err
