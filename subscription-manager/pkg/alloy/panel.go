@@ -3,7 +3,6 @@ package alloy
 import (
 	"errors"
 	"fmt"
-	"subscription-manager/pkg/jwt"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -21,7 +20,7 @@ type addPanelResponse struct {
 
 // AddSubscriptionPanel add subscription panel
 func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.Time, total float32) error {
-	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
+	recipeToken, err := getRecipeInstalToken(recipeInstallID)
 	if err != nil {
 		return err
 	}
@@ -44,7 +43,7 @@ func AddSubscriptionPanel(recipeInstallID, transactionID string, startDate time.
 
 // AddNonSubscriptionPanel add non subscription panel
 func AddNonSubscriptionPanel(recipeInstallID, transactionID string) error {
-	recipeToken, err := jwt.BuildJWT(cfg.RecipeID)
+	recipeToken, err := getRecipeInstalToken(recipeInstallID)
 	if err != nil {
 		return err
 	}
