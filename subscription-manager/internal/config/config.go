@@ -47,7 +47,7 @@ func Load() *Config {
 	}
 	logrus.Info("Loading envs.")
 
-	viper.SetDefault("ALLOY_URL", "http://192.168.15.8:8080/")
+	viper.SetDefault("ALLOY_URL", "http://192.168.15.8:8080")
 	viper.SetDefault("DATABASE_DRIVER", "mysql")
 	viper.SetDefault("DATABASE_HOST", "172.17.0.2:3306")
 	viper.SetDefault("DATABASE_NAME", "recipe_subscription_manager")
@@ -65,7 +65,7 @@ func Load() *Config {
 		return nil
 	}
 
-	cfg.Database.DSN = fmt.Sprintf("%s:%s@tcp(%s)/%s",
+	cfg.Database.DSN = fmt.Sprintf("%s:%s@tcp(%s)/%s?parseTime=true",
 		cfg.Database.User,
 		cfg.Database.Password,
 		cfg.Database.Host,

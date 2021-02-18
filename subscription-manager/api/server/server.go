@@ -26,7 +26,7 @@ func Run(port int) {
 	}
 
 	merchantSubscriptions = db.FetchMerchants()
-	logrus.Infof("\"%d\" subscription services registreds on database", len(merchantSubscriptions))
+	logrus.Infof(`"%d" subscription services registreds on database`, len(merchantSubscriptions))
 
 	app := App{Database: db}
 

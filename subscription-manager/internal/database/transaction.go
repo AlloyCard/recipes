@@ -10,7 +10,7 @@ import (
 
 // Transaction financial
 type Transaction struct {
-	ID            int       `db:"id"`
+	ID            string    `db:"id"`
 	Merchant      string    `db:"merchant"`
 	Amount        float32   `db:"amount"`
 	RecipeInstall string    `db:"recipe_install"`
@@ -18,11 +18,11 @@ type Transaction struct {
 }
 
 // InsertTransaction to Database
-func (db *Database) InsertTransaction(id, merchant string, amount float32, createdAt int) error {
+func (db *Database) InsertTransaction(id, merchant, recipeInstallID string, amount float32, createdAt int) error {
 	logrus.WithField("transactionId", id).Infof("Inserting transaction to database")
 
 	var query string = fmt.Sprintf(
-		"INSERT INTO transaction VALUES ('%s', '%s', '%.2f', FROM_UNIXTIME(%d));", id, merchant, amount, createdAt/1000,
+		"INSERT INTO transaction VALUES ('%s', '%s', '%.2f', '%s', FROM_UNIXTIME(%d));", id, merchant, amount, recipeInstallID, createdAt/1000,
 	)
 	return db.insert(query)
 }
@@ -30,13 +30,13 @@ func (db *Database) InsertTransaction(id, merchant string, amount float32, creat
 // FetchTransactionsByRecipeInstallAndMerchant to Database
 func (db *Database) FetchTransactionsByRecipeInstallAndMerchant(recipeInstallID, merchant string) ([]Transaction, error) {
 	var query string = fmt.Sprintf(
-		"SELECT amount, created_at FROM transaction WHERE recipeInstall = '%s' AND merchant = '%s' ORDER BY created_at;", recipeInstallID, merchant,
+		"SELECT amount, created_at FROM transaction WHERE recipe_install = '%s' AND merchant = '%s' ORDER BY created_at;", recipeInstallID, merchant,
 	)
 	response := []Transaction{}
 
 	err := db.Connection.Select(&response, query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s\tquery=%s", err, query)
 	}
 
 	return response, nil

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"strings"
 
 	"subscription-manager/internal/database"
@@ -14,30 +15,32 @@ var (
 )
 
 func (app *App) postTransaction(payload transactionEvent) {
-	transaction, err := alloy.GetTransaction(payload.Event.Transaction.ID, payload.Principal.ID)
+	logrus.WithField("payload", fmt.Sprintf("%+2v", payload)).Debug("request payload")
+	trx, err := alloy.GetTransaction(payload.Event.Transaction.ID, payload.Principal.ID)
 	if err != nil {
 		logrus.WithError(err).Error("Fail to get transaction from Alloy API")
 		return
 	}
+	logrus.WithField("transaction", fmt.Sprintf("%+2v", *trx)).Debug("transaction from Alloy API")
 
-	if !isSubscription(transaction.MerchantName) {
+	if !isSubscription(trx.MerchantName) {
 		err = alloy.AddNonSubscriptionPanel(payload.Principal.ID, payload.Event.Transaction.ID)
 		if err != nil {
-			logrus.WithError(err).Error("Fail to get addPanel on Alloy API")
+			logrus.WithError(err).Error("Fail to add non subscription panel on Alloy API")
 		}
 		return
 	}
 
 	err = app.Database.InsertTransaction(
-		payload.Event.Transaction.ID, transaction.MerchantName, transaction.Amount,
-		transaction.TransactionDate)
+		payload.Event.Transaction.ID, trx.MerchantName, payload.Principal.ID, trx.Amount,
+		trx.TransactionDate)
 	if err != nil {
 		logrus.WithError(err).Error("Fail to insert transaction to Database")
 		return
 	}
 
 	trxs, err := app.Database.FetchTransactionsByRecipeInstallAndMerchant(
-		payload.Principal.ID, transaction.MerchantName)
+		payload.Principal.ID, trx.MerchantName)
 	if err != nil {
 		logrus.WithError(err).Error("Fail to fetch transactions from Database")
 		return
@@ -46,7 +49,7 @@ func (app *App) postTransaction(payload transactionEvent) {
 	err = alloy.AddSubscriptionPanel(payload.Principal.ID, payload.Event.Transaction.ID,
 		trxs[0].CreatedAt, sumTotalAmount(trxs))
 	if err != nil {
-		logrus.WithError(err).Error("Fail to get addPanel on Alloy API")
+		logrus.WithError(err).Error("Fail to add subscription panel on Alloy API")
 		return
 	}
 }

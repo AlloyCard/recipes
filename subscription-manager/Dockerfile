@@ -27,13 +27,14 @@ ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static /bin/tini
 
 COPY ./jwtRSA256-private.pem ./jwtRSA256-private.pem
+RUN chmod 777 ./jwtRSA256-private.pem
 
 RUN chmod +x /bin/tini && \
   addgroup --gid 1000 --system hu && \
   adduser --uid 1000 --system hu --ingroup hu
+
 USER hu
 
 ENTRYPOINT ["/bin/tini", "--"]
-
 
 CMD ["./bin/subscripion-manager"]
